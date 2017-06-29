@@ -9,7 +9,7 @@ apt_mirror="http://http.debian.net/debian"
 docker_image="32bit/debian:$suite"
 
 ### make sure that the required tools are installed
-apt-get install -y docker.io debootstrap dchroot
+apt-get install -y docker-engine debootstrap dchroot
 
 ### install a minbase system with debootstrap
 export DEBIAN_FRONTEND=noninteractive

@@ -2,6 +2,12 @@
 ### Build a docker image for debian i386.
 
 ### settings
+if [[ "$1" == "--testing" ]]; then
+  is_testing=1
+  shift
+else
+  is_testing=0
+fi
 arch=i386
 suite=${1:-jessie}
 chroot_dir="/var/chroot/$suite"
@@ -16,11 +22,17 @@ export DEBIAN_FRONTEND=noninteractive
 debootstrap --arch $arch $suite $chroot_dir $apt_mirror
 
 ### update the list of package sources
-cat <<EOF > $chroot_dir/etc/apt/sources.list
+if [[ "${is_testing}" == "1" ]]; then
+  cat <<EOF > $chroot_dir/etc/apt/sources.list
+deb $apt_mirror $suite main contrib non-free
+EOF
+else
+  cat <<EOF > $chroot_dir/etc/apt/sources.list
 deb $apt_mirror $suite main contrib non-free
 deb $apt_mirror $suite-updates main contrib non-free
 deb http://security.debian.org/ $suite/updates main contrib non-free
 EOF
+fi
 
 ### upgrade packages
 chroot $chroot_dir apt-get update
